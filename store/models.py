@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+
+# Model to represent user addresses
 class Address(models.Model):
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     locality = models.CharField(max_length=150, verbose_name="Nearest Location")
@@ -11,7 +13,7 @@ class Address(models.Model):
     def __str__(self):
         return self.locality
 
-
+# Model to represent product categories
 class Category(models.Model):
     title = models.CharField(max_length=50, verbose_name="Category Title")
     slug = models.SlugField(max_length=55, verbose_name="Category Slug")
@@ -29,7 +31,7 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
-
+# Model to represent products
 class Product(models.Model):
     title = models.CharField(max_length=150, verbose_name="Product Title")
     slug = models.SlugField(max_length=160, verbose_name="Product Slug")
@@ -38,7 +40,7 @@ class Product(models.Model):
     detail_description = models.TextField(blank=True, null=True, verbose_name="Detail Description")
     product_image = models.ImageField(upload_to='product', blank=True, null=True, verbose_name="Product Image")
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    category = models.ForeignKey(Category, verbose_name="Product Categoy", on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, verbose_name="Product Category", on_delete=models.CASCADE)
     is_active = models.BooleanField(verbose_name="Is Active?")
     is_featured = models.BooleanField(verbose_name="Is Featured?")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created Date")
@@ -51,7 +53,7 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-
+# Model to represent items in a user's cart
 class Cart(models.Model):
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, verbose_name="Product", on_delete=models.CASCADE)
@@ -67,7 +69,7 @@ class Cart(models.Model):
     def total_price(self):
         return self.quantity * self.product.price
 
-
+# Choices for order status
 STATUS_CHOICES = (
     ('Pending', 'Pending'),
     ('Accepted', 'Accepted'),
@@ -77,6 +79,7 @@ STATUS_CHOICES = (
     ('Cancelled', 'Cancelled')
 )
 
+# Model to represent user orders
 class Order(models.Model):
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     address = models.ForeignKey(Address, verbose_name="Shipping Address", on_delete=models.CASCADE)
@@ -87,4 +90,4 @@ class Order(models.Model):
         choices=STATUS_CHOICES,
         max_length=50,
         default="Pending"
-        )
+    )
